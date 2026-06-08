@@ -1,2 +1,4 @@
-ShaderName "TemplateFull"
-EditorName "lilToon.TemplateFullInspector"
+ShaderName "dennokoworks/CyberEx"
+EditorName "dennokoworks.CyberExInspector"
+Replace "            #pragma vertex vert\r\n            #pragma fragment frag\r\n" \
+        "            #pragma vertex vertCustom\r\n            #pragma geometry geomCustom\r\n            #pragma fragment frag\r\n            #pragma require geometry\r\n"

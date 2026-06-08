@@ -1,6 +1,6 @@
 {
-    "name": "TemplateFull",
-    "rootNamespace": "",
+    "name": "dennokoworks.CyberEx.Editor",
+    "rootNamespace": "dennokoworks",
     "references": [
         "lilToon.Editor"
     ],

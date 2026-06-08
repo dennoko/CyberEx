@@ -2,64 +2,157 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace lilToon
+namespace dennokoworks
 {
-    // シェーダー名の変更は以下 3 箇所をすべて揃えること:
-    //   1. この class 名（TemplateFullInspector → 任意名）
-    //   2. 下の shaderName 定数
-    //   3. Shaders/lilCustomShaderDatas.lilblock の ShaderName タグ・EditorName タグ
-    //   4. Editor/TemplateFull.asmdef の name フィールドとファイル名自体
-    public class TemplateFullInspector : lilToonInspector
+    public class CyberExInspector : lilToon.lilToonInspector
     {
-        // Custom properties
-        // ここで MaterialProperty を宣言し、LoadCustomProperties() で FindProperty() する
-        //MaterialProperty customVariable;
+        private const string shaderName = "dennokoworks/CyberEx";
 
-        private static bool isShowCustomProperties;
-        private const string shaderName = "TemplateFull";
+        // --- Master ---
+        MaterialProperty _CyberEnabled;
+        MaterialProperty _CyberIntensity;
+
+        // --- Mask / Noise ---
+        MaterialProperty _CyberMaskTex;
+        MaterialProperty _CyberNoiseTex;
+
+        // --- A. Glitch ---
+        MaterialProperty _GlitchStrength;
+        MaterialProperty _GlitchSpeed;
+        MaterialProperty _GlitchBlockScale;
+        MaterialProperty _RGBSplitStrength;
+
+        // --- B. Hologram ---
+        MaterialProperty _HoloAlpha;
+        MaterialProperty _ScanLineSpeed;
+        MaterialProperty _ScanLineDensity;
+        MaterialProperty _ScanLineWidth;
+        MaterialProperty _FlickerSpeed;
+        MaterialProperty _FlickerStrength;
+        MaterialProperty _HoloEmissionColor;
+
+        // --- C. Geometry Bug ---
+        MaterialProperty _GeoBugOffset;
+        MaterialProperty _GeoBugBlurAmount;
+        MaterialProperty _GeoBugBlurSpeed;
+        MaterialProperty _GeoBugThreshold;
+        MaterialProperty _CutoutNoiseScale;
+        MaterialProperty _CutoutThreshold;
+        MaterialProperty _CutoutSharpness;
+
+        private static bool isShowCyberMaster     = true;
+        private static bool isShowCyberGlitch      = true;
+        private static bool isShowCyberHologram    = true;
+        private static bool isShowCyberGeoBug      = true;
 
         protected override void LoadCustomProperties(MaterialProperty[] props, Material material)
         {
             isCustomShader = true;
-
-            // If you want to change rendering modes in the editor, specify the shader here
             ReplaceToCustomShaders();
             isShowRenderMode = !material.shader.name.Contains("Optional");
 
-            // If not, set isShowRenderMode to false
-            //isShowRenderMode = false;
+            _CyberEnabled       = FindProperty("_CyberEnabled",       props);
+            _CyberIntensity     = FindProperty("_CyberIntensity",     props);
+            _CyberMaskTex       = FindProperty("_CyberMaskTex",       props);
+            _CyberNoiseTex      = FindProperty("_CyberNoiseTex",      props);
 
-            //LoadCustomLanguage("");
-            //customVariable = FindProperty("_CustomVariable", props);
+            _GlitchStrength     = FindProperty("_GlitchStrength",     props);
+            _GlitchSpeed        = FindProperty("_GlitchSpeed",        props);
+            _GlitchBlockScale   = FindProperty("_GlitchBlockScale",   props);
+            _RGBSplitStrength   = FindProperty("_RGBSplitStrength",   props);
+
+            _HoloAlpha          = FindProperty("_HoloAlpha",          props);
+            _ScanLineSpeed      = FindProperty("_ScanLineSpeed",      props);
+            _ScanLineDensity    = FindProperty("_ScanLineDensity",    props);
+            _ScanLineWidth      = FindProperty("_ScanLineWidth",      props);
+            _FlickerSpeed       = FindProperty("_FlickerSpeed",       props);
+            _FlickerStrength    = FindProperty("_FlickerStrength",    props);
+            _HoloEmissionColor  = FindProperty("_HoloEmissionColor",  props);
+
+            _GeoBugOffset       = FindProperty("_GeoBugOffset",       props);
+            _GeoBugBlurAmount   = FindProperty("_GeoBugBlurAmount",   props);
+            _GeoBugBlurSpeed    = FindProperty("_GeoBugBlurSpeed",    props);
+            _GeoBugThreshold    = FindProperty("_GeoBugThreshold",    props);
+            _CutoutNoiseScale   = FindProperty("_CutoutNoiseScale",   props);
+            _CutoutThreshold    = FindProperty("_CutoutThreshold",    props);
+            _CutoutSharpness    = FindProperty("_CutoutSharpness",    props);
         }
 
         protected override void DrawCustomProperties(Material material)
         {
-            // GUIStyles Name   Description
-            // ---------------- ------------------------------------
-            // boxOuter         outer box
-            // boxInnerHalf     inner box
-            // boxInner         inner box without label
-            // customBox        box (similar to unity default box)
-            // customToggleFont label for box
-            //
-            // Helper methods:
-            //   Foldout(label, key, isOpen)      : 折りたたみセクション（bool を返す）
-            //   DrawLine()                        : 区切り線
-            //   DrawWebButton(label, url)         : Web リンクボタン
-            //   LoadCustomLanguage(guid)          : 言語ファイル読み込み（Editor/lang_custom.txt の GUID）
-            //   m_MaterialEditor.ShaderProperty() : 通常プロパティの描画
-            //   m_MaterialEditor.TexturePropertySingleLine() : テクスチャ + インラインプロパティ
-
-            isShowCustomProperties = Foldout("Custom Properties", "Custom Properties", isShowCustomProperties);
-            if(isShowCustomProperties)
+            // ---- Master ----
+            isShowCyberMaster = Foldout("CyberEx - Master", "CyberEx_Master", isShowCyberMaster);
+            if (isShowCyberMaster)
             {
                 EditorGUILayout.BeginVertical(boxOuter);
-                EditorGUILayout.LabelField(GetLoc("Custom Properties"), customToggleFont);
+                EditorGUILayout.LabelField("CyberEx Master", customToggleFont);
                 EditorGUILayout.BeginVertical(boxInnerHalf);
+                m_MaterialEditor.ShaderProperty(_CyberEnabled,   "Cyber Effects Enabled");
+                m_MaterialEditor.ShaderProperty(_CyberIntensity, "Intensity");
+                EditorGUILayout.Space(4);
+                m_MaterialEditor.TexturePropertySingleLine(
+                    new GUIContent("Cyber Mask (R=Glitch G=Holo B=GeoBug A=Cutout)"), _CyberMaskTex);
+                m_MaterialEditor.TexturePropertySingleLine(
+                    new GUIContent("Noise Texture"), _CyberNoiseTex);
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndVertical();
+            }
 
-                //m_MaterialEditor.ShaderProperty(customVariable, "Custom Variable");
+            // ---- A. Glitch ----
+            isShowCyberGlitch = Foldout("CyberEx - A. Glitch & RGB Split", "CyberEx_Glitch", isShowCyberGlitch);
+            if (isShowCyberGlitch)
+            {
+                EditorGUILayout.BeginVertical(boxOuter);
+                EditorGUILayout.LabelField("Glitch & RGB Split", customToggleFont);
+                EditorGUILayout.BeginVertical(boxInnerHalf);
+                m_MaterialEditor.ShaderProperty(_GlitchStrength,   "UV Glitch Strength");
+                m_MaterialEditor.ShaderProperty(_GlitchSpeed,      "Glitch Speed");
+                m_MaterialEditor.ShaderProperty(_GlitchBlockScale, "Block Noise Scale");
+                m_MaterialEditor.ShaderProperty(_RGBSplitStrength, "RGB Split Strength");
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndVertical();
+            }
 
+            // ---- B. Hologram ----
+            isShowCyberHologram = Foldout("CyberEx - B. Hologram", "CyberEx_Holo", isShowCyberHologram);
+            if (isShowCyberHologram)
+            {
+                EditorGUILayout.BeginVertical(boxOuter);
+                EditorGUILayout.LabelField("Hologram & Scanline", customToggleFont);
+                EditorGUILayout.BeginVertical(boxInnerHalf);
+                m_MaterialEditor.ShaderProperty(_HoloAlpha,         "Holo Alpha");
+                m_MaterialEditor.ShaderProperty(_HoloEmissionColor, "Holo Emission Color");
+                EditorGUILayout.Space(4);
+                m_MaterialEditor.ShaderProperty(_ScanLineDensity, "Scan Line Density");
+                m_MaterialEditor.ShaderProperty(_ScanLineWidth,   "Scan Line Width");
+                m_MaterialEditor.ShaderProperty(_ScanLineSpeed,   "Scan Line Speed");
+                EditorGUILayout.Space(4);
+                m_MaterialEditor.ShaderProperty(_FlickerStrength, "Flicker Strength");
+                m_MaterialEditor.ShaderProperty(_FlickerSpeed,    "Flicker Speed");
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndVertical();
+            }
+
+            // ---- C. Geometry Bug ----
+            isShowCyberGeoBug = Foldout("CyberEx - C. Geometry Bug (PC Only)", "CyberEx_GeoBug", isShowCyberGeoBug);
+            if (isShowCyberGeoBug)
+            {
+                EditorGUILayout.BeginVertical(boxOuter);
+                EditorGUILayout.LabelField("Geometry Bug / Ghost Duplicate", customToggleFont);
+                EditorGUILayout.BeginVertical(boxInnerHalf);
+                EditorGUILayout.HelpBox(
+                    "Geometry Shader: PC / Windows only. Not available on Quest/Mobile.",
+                    MessageType.Info);
+                EditorGUILayout.Space(2);
+                m_MaterialEditor.ShaderProperty(_GeoBugThreshold,  "Geo Bug Mask Threshold");
+                m_MaterialEditor.ShaderProperty(_GeoBugOffset,     "Normal Offset");
+                m_MaterialEditor.ShaderProperty(_GeoBugBlurAmount, "Lateral Blur Amount");
+                m_MaterialEditor.ShaderProperty(_GeoBugBlurSpeed,  "Blur Speed");
+                EditorGUILayout.Space(4);
+                EditorGUILayout.LabelField("Cutout Pattern", EditorStyles.boldLabel);
+                m_MaterialEditor.ShaderProperty(_CutoutNoiseScale, "Noise Scale");
+                m_MaterialEditor.ShaderProperty(_CutoutThreshold,  "Cutout Threshold");
+                m_MaterialEditor.ShaderProperty(_CutoutSharpness,  "Cutout Sharpness");
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndVertical();
             }
@@ -129,23 +222,6 @@ namespace lilToon
             ltsmfur     = Shader.Find("Hidden/" + shaderName + "/MultiFur");
             ltsmgem     = Shader.Find("Hidden/" + shaderName + "/MultiGem");
         }
-
-        // You can create a menu like this
-        /*
-        [MenuItem("Assets/TemplateFull/Convert material to custom shader", false, 1100)]
-        private static void ConvertMaterialToCustomShaderMenu()
-        {
-            if(Selection.objects.Length == 0) return;
-            TemplateFullInspector inspector = new TemplateFullInspector();
-            for(int i = 0; i < Selection.objects.Length; i++)
-            {
-                if(Selection.objects[i] is Material)
-                {
-                    inspector.ConvertMaterialToCustomShader((Material)Selection.objects[i]);
-                }
-            }
-        }
-        */
     }
 }
 #endif

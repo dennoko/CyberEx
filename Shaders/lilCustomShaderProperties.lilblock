@@ -1,16 +1,35 @@
 
         //----------------------------------------------------------------------------------------------------------------------
-        // Custom Properties
-        // ここに追加したプロパティに対応する HLSL 変数を custom.hlsl の
-        // LIL_CUSTOM_PROPERTIES / LIL_CUSTOM_TEXTURES に定義すること
-        //
-        // よく使うアトリビュート:
-        //   [lilVec3]       : xyz を Vector3 として表示（w は表示しない）
-        //   [lilVec3Float]  : xyz を Vector3, w を Float として表示
-        //   [lilEnum]       : 整数をドロップダウンで表示  例: [lilEnum] _Mode ("Mode|A|B|C", Int) = 0
-        //   [lilToggle]     : 0/1 をトグルで表示
-        //   [NoScaleOffset] : テクスチャのタイリング・オフセット欄を非表示
-        //   [Normal]        : テクスチャを法線マップとして扱う
-        //   [HDR]           : カラーをHDR入力として扱う
-        //
-        //_CustomVariable ("Custom Variable", Float) = 0
+        // CyberEx Properties
+
+        // --- Master ---
+        [lilToggle]     _CyberEnabled           ("Cyber Effects Enabled", Float) = 1.0
+                        _CyberIntensity         ("Cyber Intensity", Range(0.0, 1.0)) = 1.0
+
+        // --- Mask / Noise ---
+        [NoScaleOffset] _CyberMaskTex           ("Cyber Mask (R=Glitch G=Holo B=GeoBug A=Cutout)", 2D) = "white" {}
+        [NoScaleOffset] _CyberNoiseTex          ("Cyber Noise Texture", 2D) = "white" {}
+
+        // --- A. Glitch ---
+                        _GlitchStrength         ("Glitch UV Strength", Range(0.0, 0.1)) = 0.02
+                        _GlitchSpeed            ("Glitch Speed", Float) = 3.0
+                        _GlitchBlockScale       ("Block Noise Scale", Float) = 50.0
+                        _RGBSplitStrength       ("RGB Split Strength", Range(0.0, 0.05)) = 0.01
+
+        // --- B. Hologram ---
+                        _HoloAlpha              ("Holo Alpha", Range(0.0, 1.0)) = 0.5
+                        _ScanLineSpeed          ("Scan Line Speed", Float) = 2.0
+                        _ScanLineDensity        ("Scan Line Density", Float) = 20.0
+                        _ScanLineWidth          ("Scan Line Width", Range(0.0, 1.0)) = 0.08
+                        _FlickerSpeed           ("Flicker Speed", Float) = 5.0
+                        _FlickerStrength        ("Flicker Strength", Range(0.0, 1.0)) = 0.3
+        [HDR]           _HoloEmissionColor      ("Holo Emission Color", Color) = (0.0, 0.5, 1.0, 1.0)
+
+        // --- C. Geometry Bug ---
+                        _GeoBugOffset           ("Geo Bug Normal Offset", Float) = 0.05
+                        _GeoBugBlurAmount       ("Geo Bug Blur Amount", Float) = 0.04
+                        _GeoBugBlurSpeed        ("Geo Bug Blur Speed", Float) = 10.0
+                        _GeoBugThreshold        ("Geo Bug Mask Threshold", Range(0.0, 1.0)) = 0.3
+                        _CutoutNoiseScale       ("Cutout Noise Scale", Float) = 25.0
+                        _CutoutThreshold        ("Cutout Threshold", Range(0.0, 1.0)) = 0.45
+                        _CutoutSharpness        ("Cutout Sharpness", Range(0.01, 0.5)) = 0.15

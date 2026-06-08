@@ -1,0 +1,3 @@
+// lilSubShaderInsertPost で読み込まれるブロック（vert() 定義の直後に挿入）
+// vertCustom() と geomCustom() の定義はこのファイル経由で注入する
+#include "custom_insert_post.hlsl"
