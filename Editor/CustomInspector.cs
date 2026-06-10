@@ -87,13 +87,17 @@ namespace dennokoworks
                 EditorGUILayout.BeginVertical(boxOuter);
                 EditorGUILayout.LabelField("CyberEx Master", customToggleFont);
                 EditorGUILayout.BeginVertical(boxInnerHalf);
-                m_MaterialEditor.ShaderProperty(_CyberEnabled,   "Cyber Effects Enabled");
-                m_MaterialEditor.ShaderProperty(_CyberIntensity, "Intensity");
+                m_MaterialEditor.ShaderProperty(_CyberEnabled,   new GUIContent("Cyber Effects Enabled", "サイバーエフェクト全体の有効/無効を切り替えます"));
+                m_MaterialEditor.ShaderProperty(_CyberIntensity, new GUIContent("Intensity",             "エフェクト全体の強度を調整します（0=無効、1=最大）"));
                 EditorGUILayout.Space(4);
                 m_MaterialEditor.TexturePropertySingleLine(
-                    new GUIContent("Cyber Mask (R=Glitch G=Holo B=GeoBug A=Cutout)"), _CyberMaskTex);
+                    new GUIContent("Cyber Mask (R=Glitch G=Holo B=GeoBug A=Cutout)",
+                        "R=グリッチ / G=ホログラム / B=ジオメトリバグ / A=カットアウト のマスクテクスチャ。\n各チャンネルの輝度でエフェクトの影響範囲を制御します。"),
+                    _CyberMaskTex);
                 m_MaterialEditor.TexturePropertySingleLine(
-                    new GUIContent("Noise Texture"), _CyberNoiseTex);
+                    new GUIContent("Noise Texture",
+                        "各エフェクトのノイズ生成に使用するテクスチャ。\nタイリングさせたグレースケールノイズ画像を推奨します。"),
+                    _CyberNoiseTex);
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndVertical();
             }
@@ -105,10 +109,10 @@ namespace dennokoworks
                 EditorGUILayout.BeginVertical(boxOuter);
                 EditorGUILayout.LabelField("Glitch & RGB Split", customToggleFont);
                 EditorGUILayout.BeginVertical(boxInnerHalf);
-                m_MaterialEditor.ShaderProperty(_GlitchStrength,   "UV Glitch Strength");
-                m_MaterialEditor.ShaderProperty(_GlitchSpeed,      "Glitch Speed");
-                m_MaterialEditor.ShaderProperty(_GlitchBlockScale, "Block Noise Scale");
-                m_MaterialEditor.ShaderProperty(_RGBSplitStrength, "RGB Split Strength");
+                m_MaterialEditor.ShaderProperty(_GlitchStrength,   new GUIContent("UV Glitch Strength", "UVがずれるグリッチの強度。値が大きいほど激しくずれます。"));
+                m_MaterialEditor.ShaderProperty(_GlitchSpeed,      new GUIContent("Glitch Speed",        "グリッチアニメーションの速度。値が大きいほど早く切り替わります。"));
+                m_MaterialEditor.ShaderProperty(_GlitchBlockScale, new GUIContent("Block Noise Scale",   "ブロックノイズのスケール。値が大きいほど粗いブロックになります。"));
+                m_MaterialEditor.ShaderProperty(_RGBSplitStrength, new GUIContent("RGB Split Strength",  "RGBチャンネルを個別にずらす色収差エフェクトの強度。"));
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndVertical();
             }
@@ -120,15 +124,15 @@ namespace dennokoworks
                 EditorGUILayout.BeginVertical(boxOuter);
                 EditorGUILayout.LabelField("Hologram & Scanline", customToggleFont);
                 EditorGUILayout.BeginVertical(boxInnerHalf);
-                m_MaterialEditor.ShaderProperty(_HoloAlpha,         "Holo Alpha");
-                m_MaterialEditor.ShaderProperty(_HoloEmissionColor, "Holo Emission Color");
+                m_MaterialEditor.ShaderProperty(_HoloAlpha,         new GUIContent("Holo Alpha",          "ホログラム全体の透明度。0で完全透明、1で不透明になります。"));
+                m_MaterialEditor.ShaderProperty(_HoloEmissionColor, new GUIContent("Holo Emission Color", "ホログラムの発光カラー。HDR値でブルームとの組み合わせが映えます。"));
                 EditorGUILayout.Space(4);
-                m_MaterialEditor.ShaderProperty(_ScanLineDensity, "Scan Line Density");
-                m_MaterialEditor.ShaderProperty(_ScanLineWidth,   "Scan Line Width");
-                m_MaterialEditor.ShaderProperty(_ScanLineSpeed,   "Scan Line Speed");
+                m_MaterialEditor.ShaderProperty(_ScanLineDensity, new GUIContent("Scan Line Density", "スキャンラインの密度。値が大きいほど細かい縞模様になります。"));
+                m_MaterialEditor.ShaderProperty(_ScanLineWidth,   new GUIContent("Scan Line Width",   "スキャンラインの線幅。0に近いほど細い線になります。"));
+                m_MaterialEditor.ShaderProperty(_ScanLineSpeed,   new GUIContent("Scan Line Speed",   "スキャンラインが流れる速度。負の値で逆方向になります。"));
                 EditorGUILayout.Space(4);
-                m_MaterialEditor.ShaderProperty(_FlickerStrength, "Flicker Strength");
-                m_MaterialEditor.ShaderProperty(_FlickerSpeed,    "Flicker Speed");
+                m_MaterialEditor.ShaderProperty(_FlickerStrength, new GUIContent("Flicker Strength", "ちらつきエフェクトの強度。0で無効、1で最大のちらつきになります。"));
+                m_MaterialEditor.ShaderProperty(_FlickerSpeed,    new GUIContent("Flicker Speed",    "ちらつきの周期速度。値が大きいほど高速でちらつきます。"));
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndVertical();
             }
@@ -144,15 +148,15 @@ namespace dennokoworks
                     "Geometry Shader: PC / Windows only. Not available on Quest/Mobile.",
                     MessageType.Info);
                 EditorGUILayout.Space(2);
-                m_MaterialEditor.ShaderProperty(_GeoBugThreshold,  "Geo Bug Mask Threshold");
-                m_MaterialEditor.ShaderProperty(_GeoBugOffset,     "Normal Offset");
-                m_MaterialEditor.ShaderProperty(_GeoBugBlurAmount, "Lateral Blur Amount");
-                m_MaterialEditor.ShaderProperty(_GeoBugBlurSpeed,  "Blur Speed");
+                m_MaterialEditor.ShaderProperty(_GeoBugThreshold,  new GUIContent("Geo Bug Mask Threshold", "ジオメトリバグが発生するCyber Maskの閾値（Bチャンネル）。この値以上のピクセルでバグが現れます。"));
+                m_MaterialEditor.ShaderProperty(_GeoBugOffset,     new GUIContent("Normal Offset",          "ゴースト複製を法線方向へずらすオフセット量。値が大きいほど大きくずれます。"));
+                m_MaterialEditor.ShaderProperty(_GeoBugBlurAmount, new GUIContent("Lateral Blur Amount",    "横方向のブラー（広がり）の量。ゴーストをぼかして幽霊感を演出します。"));
+                m_MaterialEditor.ShaderProperty(_GeoBugBlurSpeed,  new GUIContent("Blur Speed",             "ブラーのアニメーション速度。値が大きいほど早く揺れます。"));
                 EditorGUILayout.Space(4);
                 EditorGUILayout.LabelField("Cutout Pattern", EditorStyles.boldLabel);
-                m_MaterialEditor.ShaderProperty(_CutoutNoiseScale, "Noise Scale");
-                m_MaterialEditor.ShaderProperty(_CutoutThreshold,  "Cutout Threshold");
-                m_MaterialEditor.ShaderProperty(_CutoutSharpness,  "Cutout Sharpness");
+                m_MaterialEditor.ShaderProperty(_CutoutNoiseScale, new GUIContent("Noise Scale",      "カットアウトパターンのノイズスケール。値が小さいほど大きな塊でカットされます。"));
+                m_MaterialEditor.ShaderProperty(_CutoutThreshold,  new GUIContent("Cutout Threshold", "カットアウトの閾値。高いほど多くの面積が消えます（Cyber MaskのAチャンネルと連動）。"));
+                m_MaterialEditor.ShaderProperty(_CutoutSharpness,  new GUIContent("Cutout Sharpness", "カットアウトエッジのシャープさ。値が大きいほど境界がくっきりします。"));
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndVertical();
             }
