@@ -23,9 +23,9 @@
 #define LIL_CUSTOM_V2F_MEMBER(id0,id1,id2,id3,id4,id5,id6,id7) \
     float4 cyberData : TEXCOORD##id0;
 
-// フラグメントシェーダーでワールド座標・法線を常に有効化
+// 走査線エフェクトにワールド座標Y値が必要なため強制有効化
+// (normalWS は my エフェクトでは未使用のため強制しない → インターポレーター節約)
 #define LIL_V2F_FORCE_POSITION_WS
-#define LIL_V2F_FORCE_NORMAL
 
 //----------------------------------------------------------------------------------------------------------------------
 // カスタム変数（float / vector）
